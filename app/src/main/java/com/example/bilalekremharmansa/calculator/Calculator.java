@@ -6,6 +6,8 @@ import java.util.Stack;
 
 /**
  * Created by bilalekremharmansa on 29.6.2017.
+ *
+ * Android stuido ortamında geliştirilen Hesap Makinası
  */
 
 public class Calculator {
@@ -21,10 +23,10 @@ public class Calculator {
 
 
     private static final char COMA = '.';
-    ; // farklı dillerde noktaya dönebilirç.
+     // farklı dillerde noktaya dönebilirç.
 
-    public enum Operators {
-        SUM, SUB, MUL, DIV, MINUS;
+    private enum Operators {
+        SUM, SUB, MUL, DIV, MINUS
 
     }
 
@@ -39,21 +41,19 @@ public class Calculator {
 
     //helper method
     private boolean isNumber(char c) {
-        return (c >= 48 && c <= 57) ? true : false;
+        return (c >= 48 && c <= 57) ;
     }
 
     //helper method
     private boolean isOperator(char c) {
         //karakter bir operator mu diye kontrol edilir.
-        if (c == '+' || c == '-' || c == '*' || c == '/') return true;
-        return false;
+        return c == '+' || c == '-' || c == '*' || c == '/';
     }
 
     //helper method
     private boolean isBracket(char c) {
         //gelen karakter parantez mi kontrolü
-        if (c == '(' || c == ')') return true;
-        return false;
+        return c == '(' || c == ')';
     }
 
     //helper method
@@ -107,8 +107,9 @@ public class Calculator {
     }
 
     public char deleteLastCharacterOfOperationLine() {
+
         if (operationLine.length() > 0) {
-            char c = operationLine.charAt(operationLine.length() - 1);
+            char c = lastCharacterOfOperationLine();
 
             if (c == '(') {
                 openBracketCounter--;
@@ -116,6 +117,11 @@ public class Calculator {
                 openBracketCounter++;
             }
             operationLine.deleteCharAt(operationLine.length() - 1);
+            currentResult = ""; //silme işlemi gerçeklişirse currentResult ın temizlenmesi gerekiyor.
+            resultFlag = false; //Silme işlemi gerçekleştikten sonra currentResult boş string olduğu için resultFlag in false olması gerekiyor.
+                                //Buraya observer pattern-listener kullanarak, currentResult "" olduğunda resultFlag i hep false eden bi yapı kurulabilr.
+                                //aynı şekilde benzer yapı olarak ')' '(' ifadelerini metot ile ekleyerek openBracketCounter daha dinamik olarak programnlanabilir
+                                //
             return c;
         }
         return ' ';
@@ -123,7 +129,7 @@ public class Calculator {
 
     public void clearEveryting() {
         operationLine = new StringBuilder();
-        currentResult = new String("0");
+        currentResult = "0";
         openBracketCounter = 0;
         resultFlag = false;
         negativeFlag = false;
@@ -146,7 +152,6 @@ public class Calculator {
 
                 if (c == '(') {
                     operatorStack.push(c);
-                    openBracketCounter++;
                 } else {//c==')'
 
                     while (operatorStack.peek() != '(') {
@@ -198,8 +203,9 @@ public class Calculator {
     //Hesap makinasının hesaplama methodu
     public String evaluate() {
         //private olarak BigDecimal nesnesi döndüren evaluate methoduna postfix stringini geçerek geriye sonucu string olarak alıyor.
+
         currentResult = evaluate(infixToPostFix().toString()).stripTrailingZeros().toPlainString();
-        ;
+
         //resultFlag in tutulma sebebi AC tuşuna basıldığında currentResult 0 olarak set ediliyor. Sonrasında sayılara tıklandığında
         //operationLine ın başına sıfır koyuyor. Bunun önüne geçilmek için flag bilgisi.
         // Bkz: AC  basıldı. currentResult ın valuesi 0. 5 butonu clicklendi. operationLine = 05 oldu. Bunun önüne geçmek için.
@@ -210,7 +216,7 @@ public class Calculator {
 
     private BigDecimal evaluate(String postfix) {
         //Postfix ifade dönüştürülmeye başlanıyo
-        Stack<BigDecimal> bigDecimalStack = new Stack<BigDecimal>();
+        Stack<BigDecimal> bigDecimalStack = new Stack<>();
         //postfix ifademiz boşluklardan oluşuyor(operator ve operandlar(sayılar) arasında boşluklar var), her bir ifadeyi tek tek işliyoruz.
         for (String expression : postfix.split(" ")) {
             //ifade operator ise stackin üstündeki 2 sayı pop edilerek(ters sıra ile) operatore göre işlem yapılır ve tekrar stacke push edilir.
@@ -240,6 +246,8 @@ public class Calculator {
 
                 } catch (EmptyStackException ex) {
                     ex.printStackTrace();
+                    break;
+                }catch (NullPointerException ex){
                     break;
                 }
 
@@ -304,7 +312,10 @@ public class Calculator {
                     operationLine = new StringBuilder(c + currentResult.replace("-", "_"));
                     openBracketCounter++;
                     currentResult = "";
-                }else{/*doNothing*/}
+                }else{// c==')' ise resultFlag in hala true kalması gerekiyor. Çünkü ) gelirse hiç bi işlem yapılmaması ve resultFlag davranışının
+                    //değişmemesi gerekiyor.
+                    resultFlag = true;
+                }
 
             } else {
                 //gelen karakter sayı veya nokta-virgül veya operator ise, sonucu direk operationLine a taşı ve ekleme recursive olarak tekrar çağır
@@ -355,6 +366,7 @@ public class Calculator {
                 //bırakmıyoruz. Böyle bir şey geldiğinde program otomatik olarak (0) a dönüştürüyor.
                 if (lastCharacterOfOperationLine() == '(') {
                     this.operationLine.append('0');
+                    openBracketCounter--;
                     this.operationLine.append(c);
                 } else if (openBracketCounter > 0) {
                     //açık parantez olduğu müddetçe kapalı parantez eklenebilir.
@@ -385,9 +397,9 @@ public class Calculator {
                 //son karakter operator ise yeni gelen operator ile son operatoru değiştir.
                 this.operationLine.replace(this.operationLine.length() - 1,
                         this.operationLine.length(), String.valueOf(c));
-            } else if (lastCharacterOfOpLine == '(') {
-                //açık parantezden sonra operator eklenemez.
-            } else {
+            }
+            //else if (lastCharacterOfOpLine == '(') { açık parantezden sonra operator eklenemez.}
+            else {
                 //diğer koşullarda ekleme yapılabilir.
                 this.operationLine.append(c);
             }
