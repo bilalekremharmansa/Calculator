@@ -6,7 +6,7 @@
     <string name="mul">*</string>
     <string name="div">/</string>
     <string name="evaluate">=</string>
-    <string name="back">&lt;-</string>
+    <string name="back">DEL</string>
     <string name="one">1</string>
     <string name="two">2</string>
     <string name="three">3</string>
