@@ -25,7 +25,7 @@ public class Calculator implements Parcelable{
 
     private int openBracketCounter;
 
-    private OperatorStack operatorStack;
+
 
 
     private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
@@ -40,7 +40,7 @@ public class Calculator implements Parcelable{
 
     public Calculator() {
         operationLine = new StringBuilder();
-        operatorStack = new OperatorStack();
+
 
         currentResult = "";
 
@@ -92,11 +92,11 @@ public class Calculator implements Parcelable{
     }
 
     //helper method
-    private boolean isStackPeekBigger(char c) throws EmptyStackException {
+    private boolean isStackPeekBigger(OperatorStack stack, char c) throws EmptyStackException {
         //operatorStack in en üstündeki karakter gelen karakterden büyük veya eşit öncelikte ise geriye true aksi taktirde false döndürülür.
-        if ((operatorStack.peek() == '*') || (operatorStack.peek() == '/'))
+        if ((stack.peek() == '*') || (stack.peek() == '/'))
             return true;
-        else if ((c == '+' || c == '-') && operatorStack.peek() == '+' || operatorStack.peek() == '-') {
+        else if ((c == '+' || c == '-') && stack.peek() == '+' || stack.peek() == '-') {
             return true;
         }
         return false;
@@ -144,6 +144,8 @@ public class Calculator implements Parcelable{
     }
 
     private StringBuilder infixToPostFix() {
+        OperatorStack operatorStack = new OperatorStack();
+
         //Infix ten postfixe dönüştürme işlemi yapılırken, sayılar ve operandlar arasında bir boşluk bırakılarak dönüştürme yapılmıştır.
         StringBuilder sb = new StringBuilder();
 
@@ -173,7 +175,7 @@ public class Calculator implements Parcelable{
 
                 try {
                     //Stackteki önceliği büyük ve eşit olduğu sürece, postfix ifadesine stackten pop edilir.
-                    while (isStackPeekBigger(c)) {
+                    while (isStackPeekBigger(operatorStack, c)) {
                         giveSpaceIfNotExist(sb);
                         sb.append(operatorStack.pop());
                     }
