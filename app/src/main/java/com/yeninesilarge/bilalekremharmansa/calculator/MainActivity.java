@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     //txtOperationLine View nesnesinin text ini günceller. Kullanıcı eşittir butonuna bastığında 2 farklı string gözüküyor, üst satırda işlem sırası
     //alt satırda sonuç. Farklı boyut ve renklerde bunun düzenlemesini bu metot yapıyor.
-    public void updateTxtOperationLineText(){
+    private void updateTxtOperationLineText() {
 
         //SpannableString bir string farklı karakterlerinin farklı boyut,renk vb özelliklerine sahip olmasını istersek kullandığımız yapıdır.
         //calculatordan operationLine ı alırken bir metot ile _ leri negatifliği belirlemek için - yapıyorum.
