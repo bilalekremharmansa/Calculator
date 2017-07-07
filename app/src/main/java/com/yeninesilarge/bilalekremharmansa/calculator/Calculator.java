@@ -356,10 +356,7 @@ public class Calculator implements Parcelable{
             //operator ile karıştırılmaması için böyle ypaıldı.
             if (operationLine.length() == 0 || isOperator(lastCharacterOfOperationLine()) || lastCharacterOfOperationLine() == '(') {
                 negativeFlag = false;
-                this.operationLine.append('(');
-                this.operationLine.append('_');
-                this.operationLine.append(c);
-                this.operationLine.append(')');
+                this.operationLine.append('(').append('_').append(c).append(')');
                 characterAppended = true;
             }
         }
